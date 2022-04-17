@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
+import { PathMatch, useMatch, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { getMovies, IgetMoviesResult } from '../api';
 import { makeImagePath } from '../utills';
@@ -40,6 +41,11 @@ const infoVars = {
 const offset = 6; //movies you want to show in one time
 
 function Home() {
+  //router
+  const history = useNavigate();
+  const bigMovieMatch: PathMatch<string> | null = useMatch('/movies/:movieId');
+  console.log(bigMovieMatch);
+
   const { data, isLoading } = useQuery<IgetMoviesResult>(
     ['movies', 'nowPlaying'],
     getMovies
@@ -59,6 +65,9 @@ function Home() {
       const maxIndex = Math.floor(totalMovies / offset);
       setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
     }
+  };
+  const onBoxClicked = (movieId: number) => {
+    history(`/movies/${movieId}`);
   };
   //
   return (
@@ -87,6 +96,8 @@ function Home() {
                   .slice(offset * index, offset * index + offset)
                   .map((movie) => (
                     <Box
+                      layoutId={movie.id + ''}
+                      onClick={() => onBoxClicked(movie.id)}
                       key={movie.id}
                       bg={makeImagePath(movie.backdrop_path || '')}
                       variants={BoxVars}
@@ -102,6 +113,23 @@ function Home() {
               </Row>
             </AnimatePresence>
           </Slider>
+          <AnimatePresence>
+            {bigMovieMatch ? (
+              <motion.div
+                layoutId={bigMovieMatch.params.movieId}
+                style={{
+                  position: 'absolute',
+                  width: '40vw',
+                  height: '80vh',
+                  backgroundColor: 'red',
+                  top: 50,
+                  left: 0,
+                  right: 0,
+                  margin: '0 auto',
+                }}
+              ></motion.div>
+            ) : null}
+          </AnimatePresence>
         </>
       )}
     </Cont>
@@ -125,17 +153,18 @@ const Info = styled(motion.div)`
 `;
 
 const Box = styled(motion.div)<{ bg: string }>`
+  cursor: pointer;
+  background-image: url('${(p) => p.bg}');
+  background-size: cover;
+  background-position: center center;
+  height: 200px;
+  color: ${(p) => p.theme.white.darker};
   &:first-child {
     transform-origin: center left;
   }
   &:last-child {
     transform-origin: center right;
   }
-  background-image: url('${(p) => p.bg}');
-  background-size: cover;
-  background-position: center center;
-  height: 200px;
-  color: ${(p) => p.theme.white.darker};
 `;
 
 const Row = styled(motion.div)`
