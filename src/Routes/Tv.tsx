@@ -1,5 +1,5 @@
 function Tv() {
-  return <div>Tv</div>;
+  return <div style={{ fontSize: '100px' }}>Tv</div>;
 }
 
 export default Tv;
