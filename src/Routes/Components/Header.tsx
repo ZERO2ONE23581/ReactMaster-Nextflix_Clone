@@ -1,8 +1,7 @@
 import { Link, useMatch } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, useAnimation, useViewportScroll } from 'framer-motion';
 import styled from 'styled-components';
-import { useState } from 'react';
-import { theme } from '../../theme';
+import { useEffect, useState } from 'react';
 
 //Framer Animation
 const logoVars = {
@@ -14,17 +13,48 @@ const logoVars = {
     transition: { repeat: Infinity },
   },
 };
+const navVars = {
+  start: {
+    backgroundColor: 'rgba(0,0,0,0)',
+  },
+  scroll: { backgroundColor: 'rgba(0,0,0,1)' },
+};
 
 //MAIN FUNCTION
 function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const homeMatch = useMatch('/');
   const tvMatch = useMatch('tv');
-  const toggleSearch = () => setSearchOpen((prev) => !prev);
+  const inputAnimation = useAnimation();
+  const navAnimation = useAnimation();
 
+  //Search Animation
+  const toggleSearch = () => {
+    if (searchOpen) {
+      inputAnimation.start({ scaleX: 0 });
+    } else {
+      inputAnimation.start({ scaleX: 1 });
+    }
+    setSearchOpen((prev) => !prev);
+  };
+  //Scroll Animation
+  const { scrollY } = useViewportScroll();
+  useEffect(() => {
+    scrollY.onChange(() => {
+      if (scrollY.get() > 80) {
+        navAnimation.start('scroll');
+      } else {
+        navAnimation.start('start');
+      }
+    });
+  }, [scrollY]);
   //
   return (
-    <Nav>
+    <Nav
+      variants={navVars}
+      animate={navAnimation}
+      initial={{ backgroundColor: 'rgba(0,0,0,0)' }}
+    >
       <Col>
         <Logo
           variants={logoVars}
@@ -50,8 +80,8 @@ function Header() {
       <Col>
         <Search>
           <motion.svg
-            transition={{ type: 'linear' }}
             onClick={toggleSearch}
+            transition={{ type: 'linear' }}
             animate={{ x: searchOpen ? -246 : 0 }}
             fill="currentColor"
             viewBox="0 0 20 20"
@@ -64,8 +94,9 @@ function Header() {
             ></path>
           </motion.svg>
           <Input
+            initial={{ scaleX: 0 }}
+            animate={inputAnimation}
             transition={{ type: 'linear' }}
-            animate={{ scaleX: searchOpen ? 1 : 0 }}
             placeholder="Search for Movies or TV shows!"
           />
         </Search>
@@ -93,14 +124,13 @@ const Input = styled(motion.input)`
   border: 1px solid ${(props) => props.theme.white.lighter};
 `;
 
-const Nav = styled.nav`
+const Nav = styled(motion.nav)`
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: fixed;
   width: 100%;
   top: 0;
-  background-color: black;
   font-size: 14px;
   padding: 20px 60px;
   color: white;
