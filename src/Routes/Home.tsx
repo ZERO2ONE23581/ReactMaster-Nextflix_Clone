@@ -7,37 +7,6 @@ import styled from 'styled-components';
 import { getMovies, IgetMoviesResult } from '../api';
 import { makeImagePath } from '../utills';
 
-//Animation
-const rowVars = {
-  hidden: {
-    x: window.outerWidth + 7,
-  },
-  visible: {
-    x: 0,
-  },
-  exit: {
-    x: -window.outerWidth - 7,
-  },
-};
-
-const BoxVars = {
-  normal: {
-    scale: 1,
-  },
-  hover: {
-    scale: 1.3,
-    y: -50,
-    transition: { delay: 0.2, type: 'tween' },
-  },
-};
-
-const infoVars = {
-  hover: {
-    opacity: 1,
-    transition: { delay: 0.2, type: 'tween' },
-  },
-};
-
 //
 const offset = 6; //movies you want to show in one time
 
@@ -159,6 +128,36 @@ function Home() {
   );
 }
 export default Home;
+//Animation
+const rowVars = {
+  hidden: {
+    x: window.outerWidth + 7,
+  },
+  visible: {
+    x: 0,
+  },
+  exit: {
+    x: -window.outerWidth - 7,
+  },
+};
+
+const BoxVars = {
+  normal: {
+    scale: 1,
+  },
+  hover: {
+    scale: 1.3,
+    y: -50,
+    transition: { delay: 0.2, type: 'tween' },
+  },
+};
+
+const infoVars = {
+  hover: {
+    opacity: 1,
+    transition: { delay: 0.2, type: 'tween' },
+  },
+};
 
 //Components
 const BigCover = styled.div`

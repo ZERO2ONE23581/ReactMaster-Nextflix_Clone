@@ -1,24 +1,12 @@
-import { Link, useMatch } from 'react-router-dom';
+import { Link, useMatch, useNavigate } from 'react-router-dom';
 import { motion, useAnimation, useViewportScroll } from 'framer-motion';
 import styled from 'styled-components';
 import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 
-//Framer Animation
-const logoVars = {
-  normal: {
-    fillOpacity: 1,
-  },
-  active: {
-    fillOpacity: [0, 1, 0],
-    transition: { repeat: Infinity },
-  },
-};
-const navVars = {
-  start: {
-    backgroundColor: 'rgba(0,0,0,0)',
-  },
-  scroll: { backgroundColor: 'rgba(0,0,0,1)' },
-};
+interface IForm {
+  keyword: string;
+}
 
 //MAIN FUNCTION
 function Header() {
@@ -48,6 +36,15 @@ function Header() {
       }
     });
   }, [scrollY]);
+
+  //Navigate
+  const navigate = useNavigate();
+
+  //useForm
+  const { register, handleSubmit } = useForm<IForm>();
+  const onValid = (data: IForm) => {
+    navigate(`/search?keyword=${data.keyword} `);
+  };
   //
   return (
     <Nav
@@ -78,7 +75,7 @@ function Header() {
         </Items>
       </Col>
       <Col>
-        <Search>
+        <Search onSubmit={handleSubmit(onValid)}>
           <motion.svg
             onClick={toggleSearch}
             transition={{ type: 'linear' }}
@@ -94,6 +91,7 @@ function Header() {
             ></path>
           </motion.svg>
           <Input
+            {...register('keyword', { required: 'true', minLength: 2 })}
             initial={{ scaleX: 0 }}
             animate={inputAnimation}
             transition={{ type: 'linear' }}
@@ -105,6 +103,23 @@ function Header() {
   );
 }
 export default Header;
+
+//Framer Animation
+const logoVars = {
+  normal: {
+    fillOpacity: 1,
+  },
+  active: {
+    fillOpacity: [0, 1, 0],
+    transition: { repeat: Infinity },
+  },
+};
+const navVars = {
+  start: {
+    backgroundColor: 'rgba(0,0,0,0)',
+  },
+  scroll: { backgroundColor: 'rgba(0,0,0,1)' },
+};
 
 //Components
 const Input = styled(motion.input)`
@@ -170,7 +185,7 @@ const Item = styled.li`
   }
 `;
 
-const Search = styled.span`
+const Search = styled.form`
   position: relative;
   display: flex;
   align-items: center;
