@@ -18,6 +18,18 @@ const rowVars = {
   },
 };
 
+const BoxVars = {
+  normal: {
+    scale: 1,
+  },
+  hover: {
+    scale: 1.3,
+    y: -50,
+    transition: { delay: 0.2, type: 'tween' },
+  },
+};
+
+//
 const offset = 6; //movies you want to show in one time
 
 function Home() {
@@ -69,7 +81,11 @@ function Home() {
                   .map((movie) => (
                     <Box
                       key={movie.id}
-                      bg={makeImagePath(movie.backdrop_path || '', 'w500')}
+                      bg={makeImagePath(movie.backdrop_path || '')}
+                      variants={BoxVars}
+                      initial="normal"
+                      whileHover="hover"
+                      transition={{ type: 'tween' }}
                     />
                   ))}
               </Row>
@@ -81,11 +97,17 @@ function Home() {
   );
 }
 export default Home;
+
 const Box = styled(motion.div)<{ bg: string }>`
+  &:first-child {
+    transform-origin: center left;
+  }
+  &:last-child {
+    transform-origin: center right;
+  }
   background-image: url('${(p) => p.bg}');
   background-size: cover;
   background-position: center center;
-  position: relative;
   height: 200px;
   font-size: 20px;
   color: red;
@@ -100,6 +122,7 @@ const Row = styled(motion.div)`
 `;
 
 const Slider = styled.div`
+  position: relative;
   top: -100px;
 `;
 
