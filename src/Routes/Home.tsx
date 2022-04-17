@@ -1,4 +1,5 @@
 import { AnimatePresence, motion, useViewportScroll } from 'framer-motion';
+import { url } from 'inspector';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
 import { PathMatch, useMatch, useNavigate } from 'react-router-dom';
@@ -74,6 +75,12 @@ function Home() {
     history(`/`);
   };
   //
+  const clickedMovie =
+    bigMovieMatch?.params.movieId &&
+    data?.results.find(
+      (movie) => movie.id + '' === bigMovieMatch.params.movieId
+    );
+  console.log(clickedMovie);
   return (
     <Cont>
       {isLoading ? (
@@ -128,7 +135,21 @@ function Home() {
                 <BigMovie
                   style={{ top: scrollY.get() + 100 }}
                   layoutId={bigMovieMatch.params.movieId}
-                ></BigMovie>
+                >
+                  {clickedMovie && (
+                    <>
+                      <BigCover
+                        style={{
+                          backgroundImage: `linear-gradient(to top,black,transparent), url(${makeImagePath(
+                            clickedMovie.backdrop_path
+                          )})`,
+                        }}
+                      />
+                      <BigTitle>{clickedMovie.title} </BigTitle>
+                      <BigOverView>{clickedMovie.overview}</BigOverView>
+                    </>
+                  )}
+                </BigMovie>
               </>
             ) : null}
           </AnimatePresence>
@@ -140,9 +161,32 @@ function Home() {
 export default Home;
 
 //Components
+const BigCover = styled.div`
+  background-size: cover;
+  background-position: center center;
+  width: 100%;
+  height: 500px;
+`;
+
+const BigOverView = styled.p`
+  padding-left: 20px;
+  color: ${(p) => p.theme.white.darker};
+  top: -30px;
+  position: relative;
+`;
+
+const BigTitle = styled.h3`
+  top: -60px;
+  padding-left: 20px;
+  position: relative;
+  color: ${(p) => p.theme.white.lighter};
+  font-size: 30px;
+`;
 
 const BigMovie = styled(motion.div)`
-  background-color: red;
+  border-radius: 15px;
+  overflow: hidden;
+  background-color: ${(p) => p.theme.black.lighter};
   position: absolute;
   width: 40vw;
   height: 80vh;
