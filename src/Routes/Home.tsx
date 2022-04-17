@@ -29,6 +29,13 @@ const BoxVars = {
   },
 };
 
+const infoVars = {
+  hover: {
+    opacity: 1,
+    transition: { delay: 0.2, type: 'tween' },
+  },
+};
+
 //
 const offset = 6; //movies you want to show in one time
 
@@ -86,7 +93,11 @@ function Home() {
                       initial="normal"
                       whileHover="hover"
                       transition={{ type: 'tween' }}
-                    />
+                    >
+                      <Info variants={infoVars} transition={{ type: 'tween' }}>
+                        <h4>{movie.title}</h4>
+                      </Info>
+                    </Box>
                   ))}
               </Row>
             </AnimatePresence>
@@ -97,6 +108,21 @@ function Home() {
   );
 }
 export default Home;
+
+//Components
+
+const Info = styled(motion.div)`
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  opacity: 0;
+  padding: 10px;
+  background-color: ${(p) => p.theme.black.lighter};
+  h4 {
+    text-align: center;
+    font-size: 18px;
+  }
+`;
 
 const Box = styled(motion.div)<{ bg: string }>`
   &:first-child {
@@ -109,12 +135,11 @@ const Box = styled(motion.div)<{ bg: string }>`
   background-size: cover;
   background-position: center center;
   height: 200px;
-  font-size: 20px;
-  color: red;
+  color: ${(p) => p.theme.white.darker};
 `;
 
 const Row = styled(motion.div)`
-  position: absolute;
+  position: relative;
   width: 100%;
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -122,7 +147,6 @@ const Row = styled(motion.div)`
 `;
 
 const Slider = styled.div`
-  position: relative;
   top: -100px;
 `;
 
